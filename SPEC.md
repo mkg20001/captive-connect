@@ -36,3 +36,9 @@
 			- `header String[]->String`: Headers to set
 		- `action`: Alternative to respond. Specify an action. Possible: `failure` (general failure), `invalidCredentials` (inform user credentials are invalid), `success` (captive has been successfully solved), `continueMatch` (go to another codeblock based on match)
 		- `continueTo`: Code block to continue to. If not set will be matched by another codeblock in the same solver
+
+## Execution
+
+First the CaptiveConnect client connects to `http://detectportal.firefox.com` and gets the response
+
+It then loads the `main` block of every portal and matches against the parameters. The first portal in alphabetical order that matches will be picked

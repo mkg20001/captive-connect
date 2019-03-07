@@ -1,0 +1,18 @@
+{
+  "name": "js-poc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "solver.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MPL-2.0",
+  "dependencies": {
+    "dlv": "^1.1.2",
+    "dset": "^2.0.1",
+    "joi": "^14.3.1",
+    "js-yaml": "^3.12.2",
+    "node-fetch": "^2.3.0"
+  }
+}
