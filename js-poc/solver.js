@@ -15,13 +15,18 @@ const tough = require('tough-cookie')
 const dlv = require('dlv')
 const dset = require('dset')
 
+// TODO: perf
+function clone (a) {
+  return JSON.parse(JSON.stringify(a))
+}
+
 const Matchers = {
-  is: (value, matchWith) => String(value) === matchWith, // (true => "true") === true
+  is: (value, matchWith) => String(value) === String(matchWith), // (true => "true") === true
   equals: (value, matchWith) => value === matchWith, // YAML coerces "key: 2" into {key:2} automatically
   matches: (value, matchWith) => {
-    let [regex, flags] = matchWith.match(/^\/(.+)\/([a-z]*)/i)
+    let [_, regex, flags] = matchWith.match(/^\/(.+)\/([a-z]*)/i)
     let regexp = new RegExp(regex, flags)
-    return Boolean(value.matches(regexp))
+    return Boolean(value.match(regexp))
   }
 }
 
@@ -33,9 +38,10 @@ function matcher (variables, key, matchWith) {
 }
 
 const templateParams = {
-  header: {
+  headers: {
     'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'
-  }
+  },
+  redirect: 'manual'
 }
 
 async function turnResponseIntoData (params, res) {
@@ -109,7 +115,7 @@ function compareCondition (variables, condition) {
 }
 
 function replaceVar (vars, str) {
-  str.replace(/\${([a-z][a-z0-9.]+)}/gmi, (_, varName) => {
+  return str.replace(/\${([a-z][a-z0-9.]+)}/gmi, (_, varName) => {
     varName = varName.toLowerCase()
     return String(dlv(vars, varName))
   })
@@ -121,7 +127,7 @@ function replaceVars (vars, obj) {
   for (const key in obj) { // eslint-disable-line guard-for-in
     if (obj[key] instanceof Object && !Array.isArray(obj[key]) && typeof obj[key] === 'object') { // recursion
       out[key] = replaceVars(vars, obj[key])
-    } else if (typeof out[key] === 'string') {
+    } else if (typeof obj[key] === 'string') {
       out[key] = replaceVar(vars, obj[key])
     } else {
       out[key] = obj[key]
@@ -148,6 +154,7 @@ async function main (kickoffParameters, configStore, portalDirectory) {
   const firstRes = await doRequest(shared, kickoffParameters)
 
   const selectedPortal = Portals.filter(portal => compareCondition(firstRes, portal.solution.main.match))[0]
+  if (!selectedPortal) { throw new Error('No vaild portal found to solve') }
   shared.config = configStore.get(selectedPortal.id)
 
   let ops = selectedPortal.solution
