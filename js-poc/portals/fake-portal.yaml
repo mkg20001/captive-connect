@@ -1,0 +1,35 @@
+name: Fake Portal
+desc: The fake one, of course
+
+options:
+  user:
+    type: string
+    name: "Username"
+    required: true
+  pass:
+    type: password
+    name: "Password"
+    required: true
+
+solution:
+  main:
+    match:
+      redirect.is: true
+      header.location.matches: '/^http://captive.localhost:6346/login.php$/g'
+    respond:
+      url: "http://captive.localhost:6346/doLogin.php"
+      method: POST
+      formdata:
+        username: "${config.user}"
+        password: "${config.pass}"
+        tosAck: "Accept+TOS"
+  success:
+    match:
+      redirect.is: true
+      header.location.matches: '/^http://captive.localhost:6346/success.php$/g'
+    action: success
+  failure:
+    match:
+      redirect.is: true
+      header.location.matches: '/^http://captive.localhost:6346/login.php\?fail$/g'
+    action: failure
