@@ -104,6 +104,18 @@ function generateShared () {
   }
 }
 
+function extract (vars, extractInst) {
+  if (!vars.extracted) { vars.extracted = {} }
+
+  for (const out in extractInst) {
+    const [src, regex, flag] = extractInst[out].match(/^\/(.+)\/([a-z]*)/i)
+    const matchOn = dlv(vars, src.toLowerCase())
+    const regExp = new RegExp(regex, flag)
+    vars.extracted = matchOn.match(regExp)
+    // TODO: regexps with 'g' flag
+  }
+}
+
 function compareCondition (variables, condition) {
   for (const key in condition) {
     if (!matcher(variables, key, condition[key])) {
@@ -163,6 +175,10 @@ async function main (kickoffParameters, configStore, portalDirectory) {
   vars.config = shared.config
 
   while (true) {
+    if (op.extract) {
+      extract(vars, op.extract)
+    }
+
     if (op.respond) {
       vars = await doRequest(shared, replaceVars(vars, op.respond))
       vars.config = shared.config

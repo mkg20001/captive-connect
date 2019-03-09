@@ -27,6 +27,9 @@
 				- `status`: The status code
 				- `method`: The method used to make the request
 				- `config.$name`: Configuration object with key
+				- `body`: The body as string
+		- `extract`: Extract specfifc parts of varaibles using regex
+			- example: `href: 'body/href="(http://.+)"/mi'` extracts a href from content. Later can be used as `extracted.href.1`
 		- `respond`: What to respond. All fields allow for usage of variables described in `match` using `${VARIABLENAME}`
 			- `url String`: The URL to request
 			- `method String`: The method which to use (default `GET`)

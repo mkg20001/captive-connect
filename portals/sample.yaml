@@ -1,51 +1,51 @@
 name: Sample Portal
 
 options:
-	user:
-		type: string
-		name: "Username"
-		required: true
-	pass:
-		type: password
-		name: "Password"
-		required: true
-	isBusiness:
-		type: boolean
-		name: "Business"
-		desc: "Whether to use business login page instead of normal login page"
+  user:
+    type: string
+    name: "Username"
+    required: true
+  pass:
+    type: password
+    name: "Password"
+    required: true
+  isBusiness:
+    type: boolean
+    name: "Business"
+    desc: "Whether to use business login page instead of normal login page"
 
 solution:
-	main:
-		match:
-			redirect.is: true
-			header.location.matches: '/^http://192.168.178.1.+/g'
-			header.server.equals: 'CaptiveWorld'
-		action: continueMatch
-	login.normal:
-		match:
-			redirect.is: true
-			header.location.matches: '/^http://192.168.178.1.+/g'
-			header.server.equals: 'CaptiveWorld'
-			config.isBusiness.is: false
-		respond:
-			url: http://192.168.178.1/login.php
-			method: POST
-			formdata:
-				username: "${config.user}"
-				password: "${config.password}"
-	login.business:
-		match:
-			redirect.is: true
-			header.location.matches: '/^http://192.168.178.1.+/g'
-			header.server.equals: 'CaptiveWorld'
-			config.isBusiness.is: true
-		respond:
-			url: http://192.168.178.1/login-business.php
-			method: POST
-			formdata:
-				username: "${config.user}"
-				password: "${config.password}"
-	checkSuccess:
-		match:
-			content.matches: '/Successfull authentication/gi'
-		action: success
+  main:
+    match:
+      redirect.is: true
+      header.location.matches: '/^http://192.168.178.1.+/g'
+      header.server.equals: 'CaptiveWorld'
+    action: continueMatch
+  login.normal:
+    match:
+      redirect.is: true
+      header.location.matches: '/^http://192.168.178.1.+/g'
+      header.server.equals: 'CaptiveWorld'
+      config.isBusiness.is: false
+    respond:
+      url: http://192.168.178.1/login.php
+      method: POST
+      formdata:
+        username: "${config.user}"
+        password: "${config.password}"
+  login.business:
+    match:
+      redirect.is: true
+      header.location.matches: '/^http://192.168.178.1.+/g'
+      header.server.equals: 'CaptiveWorld'
+      config.isBusiness.is: true
+    respond:
+      url: http://192.168.178.1/login-business.php
+      method: POST
+      formdata:
+        username: "${config.user}"
+        password: "${config.password}"
+  checkSuccess:
+    match:
+      content.matches: '/Successfull authentication/gi'
+    action: success
